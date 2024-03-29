@@ -23,13 +23,14 @@ static uint8_t timestamping = 0;
 static uint8_t terminator = SLCAN_CR;
 static uint8_t UART_FLAG = 0;
 volatile uint8_t sl_frame_len=0;
-
 uint8_t sl_frame[32];
-
+uint8_t rxCnt_slcan;
 extern UART_HandleTypeDef huart2;
 extern USBD_HandleTypeDef hUsbDeviceFS;
+extern DMA_HandleTypeDef hdma_usart2_tx;
 extern CAN_HandleTypeDef hcan;
 extern volatile int32_t serialNumber;
+extern void hUCCB_HandleBufferError();
 
 void initCanOnStart()
 {
@@ -285,6 +286,7 @@ uint8_t slCanCheckCommand(uint8_t *line)
                 slcanSetOutputChar('V');
                 slcanSetOutputAsHex(VERSION_HARDWARE_MAJOR);
                 slcanSetOutputAsHex(VERSION_HARDWARE_MINOR);
+                slcanSetOutputChar('h');
                 result = terminator;
             }
             break;
@@ -445,7 +447,7 @@ uint8_t slCanCheckCommand(uint8_t *line)
 
    line[0] = 0;
    slcanSetOutputChar(result);
-   return 1;
+   return result;
 }
 
 /**

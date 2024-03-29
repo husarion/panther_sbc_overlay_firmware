@@ -54,13 +54,23 @@
 /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+#include "stdint.h"
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
 
 #define CAN_MOD_Pin GPIO_PIN_4
 #define CAN_MOD_GPIO_Port GPIOB
+
+#define UART_RTS_Pin GPIO_PIN_1
+#define UART_RTS_GPIO_Port GPIOA
+
+#define UART_CTS_Pin GPIO_PIN_0
+#define UART_CTS_GPIO_Port GPIOA
+
+#define LED_SEL_FR_GPIO_PORT GPIOB
+#define LED_SEL_FR_Pin		 GPIO_PIN_0
+
 
 /* ########################## Assert Selection ############################## */
 /**
@@ -72,7 +82,60 @@
 /* USER CODE BEGIN Private defines */
 #define LED_Pin GPIO_PIN_10
 #define LED_GPIO_Port GPIOB
+
 #define CAN_RX_BUFFER_SIZE 3
+
+#define ERR_CODE_CAN 1
+#define ERR_CODE_
+
+#define UART_RX_BUFFER_SIZE    30
+#define TYPE_ID 0x16
+#define NUM_LEDS 46
+
+#define RTS_LOW() HAL_GPIO_WritePin(UART_RTS_GPIO_Port, UART_RTS_Pin, GPIO_PIN_RESET)
+#define RTS_HIGH() HAL_GPIO_WritePin(UART_RTS_GPIO_Port, UART_RTS_Pin, GPIO_PIN_SET)
+
+/* APA102 SPI Frame */
+typedef struct
+{
+  union {
+    uint8_t buf[4];
+    struct {
+      uint8_t fixed : 3;
+      uint8_t brightness : 5;
+      uint8_t blue;
+      uint8_t green;
+      uint8_t red;
+    }fields;
+  };
+}Led;
+
+typedef struct tcanRxFlags {
+	union {
+		struct {
+			uint8_t fifo1 :1;
+			uint8_t fifo2 :1;
+		};
+		uint8_t byte;
+	} flags;
+	uint8_t activefifo;
+} tcanRx;
+
+typedef struct
+{
+	uint8_t bufferParsed  :1;
+	uint8_t bufferCleared :1;
+	uint8_t data[UART_RX_BUFFER_SIZE];
+}uart_buffer;
+
+
+struct _strip_buffer
+{
+  uint32_t startFrame;
+  Led strip[NUM_LEDS];
+  uint32_t endFrame;
+}strip_buffer;
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
