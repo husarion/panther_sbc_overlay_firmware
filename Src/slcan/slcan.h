@@ -13,11 +13,11 @@
 #include "stm32f0xx_hal_can.h"
 
 
-#define VERSION_FIRMWARE_MAJOR 4
-#define VERSION_FIRMWARE_MINOR 1
+#define VERSION_FIRMWARE_MAJOR 5
+#define VERSION_FIRMWARE_MINOR 2
 
-#define VERSION_HARDWARE_MAJOR 1
-#define VERSION_HARDWARE_MINOR 1
+#define VERSION_HARDWARE_MAJOR 0
+#define VERSION_HARDWARE_MINOR 3
 
 #define CAN_BR_10K 0
 #define CAN_BR_20K 1
@@ -30,16 +30,17 @@
 #define CAN_BR_1M 8
 #define CAN_BR_83K 36
 
-#define LINE_MAXLEN 100
+#define LINE_MAXLEN 30
 
 #define STATE_CONFIG 0
 #define STATE_LISTEN 1
 #define STATE_OPEN 2
-
+void initCanOnStart();
 void slcanOutputFlush(void);
 void slcanClose();
 uint8_t slcanReciveCanFrame(CanRxMsgTypeDef *pRxMsg);
 int slCanProccesInput(uint8_t ch);
+int slCanProccesInputUART(const char* string);
 uint8_t slCanCheckCommand(uint8_t *line);
 uint8_t slcan_getState(void);
 
